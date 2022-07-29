@@ -1,0 +1,28 @@
+[
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "saturation": 85
+      },
+      {
+        "lightness": 5
+      },
+      {
+        "weight": 8
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#5eff3d"
+      },
+      {
+        "weight": 2
+      }
+    ]
+  }
+]
