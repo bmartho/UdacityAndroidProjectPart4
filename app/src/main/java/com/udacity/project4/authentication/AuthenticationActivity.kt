@@ -6,8 +6,10 @@ import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
-import com.udacity.project4.R
+import com.udacity.project4.R.id
+import com.udacity.project4.R.layout
 import com.udacity.project4.locationreminders.RemindersActivity
 
 /**
@@ -19,8 +21,8 @@ class AuthenticationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_authentication)
-        val loginButton = findViewById<Button>(R.id.loginButton)
+        setContentView(layout.activity_authentication)
+        val loginButton = findViewById<Button>(id.loginButton)
 
         viewModel.authenticationState.observe(this, Observer { authenticationState ->
             if (authenticationState == AuthenticationViewModel.AuthenticationState.AUTHENTICATED) {
@@ -40,10 +42,16 @@ class AuthenticationActivity : AppCompatActivity() {
             AuthUI.IdpConfig.EmailBuilder().build(), AuthUI.IdpConfig.GoogleBuilder().build()
         )
 
+        val customLayout = AuthMethodPickerLayout.Builder(layout.authentication_custom_layout)
+            .setGoogleButtonId(id.buttonGoogle)
+            .setEmailButtonId(id.buttonEmail)
+            .build()
+
         startActivity(
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setAuthMethodPickerLayout(customLayout)
                 .build()
         )
     }
