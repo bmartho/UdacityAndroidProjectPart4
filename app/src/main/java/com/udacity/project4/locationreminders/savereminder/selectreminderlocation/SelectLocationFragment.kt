@@ -54,18 +54,23 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         Toast.makeText(requireContext(), R.string.select_location, Toast.LENGTH_LONG).show()
 
-//        TODO: call this function after the user confirms on the selected location
-        onLocationSelected()
+        binding.saveButton.setOnClickListener {
+            if (marker != null) {
+                onLocationSelected()
+            } else {
+                Toast.makeText(requireContext(), R.string.select_location, Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
 
         return binding.root
     }
 
     private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+        marker?.let {
+            _viewModel.saveLocation(it)
+        }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map_options, menu)
@@ -116,8 +121,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        // Check if location permissions are granted and if so enable the
-        // location data layer.
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
