@@ -1,8 +1,10 @@
 package com.udacity.project4.locationreminders.savereminder.selectreminderlocation
 
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
@@ -97,13 +99,19 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     @SuppressLint("MissingPermission")
+    @TargetApi(29)
     private fun enableMyLocation() {
         if (isPermissionGranted()) {
             map.isMyLocationEnabled = true
+            setLocationListener()
+            setPoiClick()
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(
+                    ACCESS_FINE_LOCATION,
+                    ACCESS_BACKGROUND_LOCATION
+                ),
                 REQUEST_LOCATION_PERMISSION
             )
         }
@@ -112,7 +120,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun isPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
             requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
+            ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -131,10 +139,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMaps: GoogleMap) {
         map = googleMaps
-
         enableMyLocation()
-        setLocationListener()
-        setPoiClick()
 
         map.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
