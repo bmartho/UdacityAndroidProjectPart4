@@ -1,7 +1,6 @@
 package com.udacity.project4.locationreminders.savereminder.selectreminderlocation
 
 
-import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
@@ -9,7 +8,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.LocationServices
@@ -106,11 +104,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             setLocationListener()
             setPoiClick()
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf(
-                    ACCESS_FINE_LOCATION,
-                    ACCESS_BACKGROUND_LOCATION
+                    ACCESS_FINE_LOCATION
                 ),
                 REQUEST_LOCATION_PERMISSION
             )

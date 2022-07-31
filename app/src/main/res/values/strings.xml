@@ -36,6 +36,10 @@
     <string name="login_email">Sign in with email</string>
     <string name="login_google">Sign in with Google</string>
     <string name="map_image_content_description">Map image</string>
+    <string name="reminder_title_details">Reminder Title:</string>
+    <string name="reminder_desc_details">Description:</string>
+    <string name="reminder_location_details">Reminder Location:</string>
+    <string name="back">Back</string>
 
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
