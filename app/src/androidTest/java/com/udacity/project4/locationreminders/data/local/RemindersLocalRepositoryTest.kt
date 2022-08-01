@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -67,7 +67,7 @@ class RemindersLocalRepositoryTest {
         val result = remindersLocalRepository.getReminders() as Result.Success
 
         // THEN
-        MatcherAssert.assertThat(result, `is`(Result.Success(listOf(reminderDTO))))
+        assertThat(result, `is`(Result.Success(listOf(reminderDTO))))
     }
 
     @Test
@@ -92,7 +92,7 @@ class RemindersLocalRepositoryTest {
         val result = remindersLocalRepository.getReminder(reminderDTO.id) as Result.Success
 
         // THEN
-        MatcherAssert.assertThat(result, `is`(Result.Success(reminderDTO)))
+        assertThat(result, `is`(Result.Success(reminderDTO)))
     }
 
     @Test
@@ -117,7 +117,7 @@ class RemindersLocalRepositoryTest {
         val result = remindersLocalRepository.getReminder("123") as Result.Error
 
         // THEN
-        MatcherAssert.assertThat(result, `is`(Result.Error("Reminder not found!")))
+        assertThat(result, `is`(Result.Error("Reminder not found!")))
     }
 
     @Test
@@ -143,6 +143,6 @@ class RemindersLocalRepositoryTest {
         val result = remindersLocalRepository.getReminders() as Result.Success
 
         // THEN
-        MatcherAssert.assertThat(result.data.size, `is`(0))
+        assertThat(result.data.size, `is`(0))
     }
 }

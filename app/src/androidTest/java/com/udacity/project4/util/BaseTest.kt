@@ -20,6 +20,7 @@ open class BaseTest :
     AutoCloseKoinTest() {// Extended Koin Test - embed autoclose @after method to close Koin after every test
 
     lateinit var repository: ReminderDataSource
+    lateinit var saveReminderViewModel: SaveReminderViewModel
     private lateinit var appContext: Application
 
     /**
@@ -50,8 +51,9 @@ open class BaseTest :
         startKoin {
             modules(listOf(myModule))
         }
-        //Get our real repository
+        //Get our real repository and viewModel
         repository = get()
+        saveReminderViewModel = get()
 
         //clear the data to start fresh
         runBlocking {

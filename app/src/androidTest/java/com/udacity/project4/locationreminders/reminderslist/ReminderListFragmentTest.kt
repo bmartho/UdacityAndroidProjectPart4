@@ -36,7 +36,7 @@ class ReminderListFragmentTest : BaseTest() {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Test
-    fun clickTask_navigateToSaveReminderFragment() = runBlockingTest {
+    fun navigateToSaveReminderFragment() = runBlockingTest {
         // GIVEN
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
 
@@ -56,7 +56,7 @@ class ReminderListFragmentTest : BaseTest() {
     }
 
     @Test
-    fun clickTask_navigateToLogout() = runBlockingTest {
+    fun navigateToLogout() = runBlockingTest {
         // GIVEN
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
 

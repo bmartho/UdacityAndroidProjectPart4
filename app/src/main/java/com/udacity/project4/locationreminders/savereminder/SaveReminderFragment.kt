@@ -67,8 +67,7 @@ class SaveReminderFragment : BaseFragment() {
             if (_viewModel.validateAndSaveReminder(reminderData)) {
                 createGeofence(reminderData)
             } else {
-                Toast.makeText(requireContext(), R.string.error_on_saving, Toast.LENGTH_SHORT)
-                    .show()
+                _viewModel.showToast.value = getString(R.string.error_on_saving)
             }
         }
     }
