@@ -10,7 +10,7 @@ import com.udacity.project4.locationreminders.utils.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers.`is`
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -28,7 +28,6 @@ class RemindersListViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
-    @ExperimentalCoroutinesApi
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
@@ -48,12 +47,12 @@ class RemindersListViewModelTest {
         // THEN
         assertThat(
             remindersListViewModel.showSnackBar.getOrAwaitValue(),
-            Matchers.`is`("error")
+            `is`("error")
         )
 
         assertThat(
             remindersListViewModel.showNoData.getOrAwaitValue(),
-            Matchers.`is`(true)
+            `is`(true)
         )
     }
 
@@ -82,19 +81,19 @@ class RemindersListViewModelTest {
         // THEN
         assertThat(
             remindersListViewModel.remindersList.getOrAwaitValue()[0].title,
-            Matchers.`is`(title)
+            `is`(title)
         )
         assertThat(
             remindersListViewModel.remindersList.getOrAwaitValue()[0].description,
-            Matchers.`is`(description)
+            `is`(description)
         )
         assertThat(
             remindersListViewModel.remindersList.getOrAwaitValue()[0].location,
-            Matchers.`is`(location)
+            `is`(location)
         )
         assertThat(
             remindersListViewModel.showNoData.getOrAwaitValue(),
-            Matchers.`is`(false)
+            `is`(false)
         )
     }
 
@@ -109,14 +108,14 @@ class RemindersListViewModelTest {
         // THEN
         assertThat(
             remindersListViewModel.showLoading.getOrAwaitValue(),
-            Matchers.`is`(true)
+            `is`(true)
         )
 
         mainCoroutineRule.resumeDispatcher()
 
         assertThat(
             remindersListViewModel.showLoading.getOrAwaitValue(),
-            Matchers.`is`(false)
+            `is`(false)
         )
     }
 
