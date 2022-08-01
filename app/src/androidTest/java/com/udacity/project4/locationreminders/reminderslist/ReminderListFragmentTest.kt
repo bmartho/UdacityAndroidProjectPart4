@@ -56,12 +56,12 @@ class ReminderListFragmentTest : BaseTest() {
     }
 
     @Test
-    fun navigateToLogout() = runBlockingTest {
+    fun navigateToLogout() {
         // GIVEN
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
 
         // WHEN
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext);
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         onView(
             withText(
                 getApplicationContext<Context>().getString(
