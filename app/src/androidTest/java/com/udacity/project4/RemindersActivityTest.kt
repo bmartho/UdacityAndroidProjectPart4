@@ -19,7 +19,7 @@ import com.udacity.project4.util.BaseTest
 import com.udacity.project4.util.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -130,15 +130,82 @@ class RemindersActivityTest : BaseTest() {
         onView(withText(location)).check(matches(isDisplayed()))
         assertThat(
             saveReminderViewModel.showToast.getOrAwaitValue(),
-            Matchers.`is`(
+            `is`(
                 ApplicationProvider.getApplicationContext<Context>()
                     .getString(R.string.reminder_saved)
             )
         )
         assertThat(
             saveReminderViewModel.navigationCommand.getOrAwaitValue(),
-            Matchers.instanceOf(NavigationCommand.Back.javaClass)
+            instanceOf(NavigationCommand.Back.javaClass)
         )
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun reminderActivitySaveReminderWithNoTitle() {
+        // GIVEN
+        val location = "location"
+
+        saveReminderViewModel.reminderSelectedLocationStr.value = location
+        saveReminderViewModel.latitude.value = 1.0
+        saveReminderViewModel.longitude.value = 1.0
+
+        // WHEN
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+
+        onView(withId(R.id.addReminderFAB))
+            .perform(click())
+        onView(withId(R.id.saveReminder))
+            .perform(click())
+
+        // THEN
+        assertThat(
+            saveReminderViewModel.showSnackBarInt.getOrAwaitValue(),
+            `is`(R.string.err_enter_title)
+        )
+
+        onView(
+            allOf(
+                withId(R.id.snackbar_text), withText(
+                    ApplicationProvider.getApplicationContext<Context>()
+                        .getString(R.string.err_enter_title)
+                )
+            )
+        ).check(matches(isDisplayed()))
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun reminderActivitySaveReminderWithNoLocation() {
+        // GIVEN
+        val title = "Title"
+
+        // WHEN
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+
+        onView(withId(R.id.addReminderFAB))
+            .perform(click())
+        onView(withId(R.id.reminderTitle)).perform(typeText(title))
+        closeSoftKeyboard()
+        onView(withId(R.id.saveReminder))
+            .perform(click())
+
+        // THEN
+        assertThat(
+            saveReminderViewModel.showSnackBarInt.getOrAwaitValue(),
+            `is`(R.string.err_select_location)
+        )
+        onView(
+            allOf(
+                withId(R.id.snackbar_text), withText(
+                    ApplicationProvider.getApplicationContext<Context>()
+                        .getString(R.string.err_select_location)
+                )
+            )
+        ).check(matches(isDisplayed()))
 
         activityScenario.close()
     }
