@@ -9,6 +9,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -140,6 +141,11 @@ class RemindersActivityTest : BaseTest() {
             instanceOf(NavigationCommand.Back.javaClass)
         )
 
+        // Testing toast
+        onView(withText(R.string.reminder_saved))
+            .inRoot(withDecorView(not(decorView)))
+            .check(matches(isDisplayed()))
+
         activityScenario.close()
     }
 
@@ -166,6 +172,7 @@ class RemindersActivityTest : BaseTest() {
             `is`(R.string.err_enter_title)
         )
 
+        // Testing snackbar
         onView(
             allOf(
                 withId(R.id.snackbar_text), withText(
@@ -198,6 +205,8 @@ class RemindersActivityTest : BaseTest() {
             saveReminderViewModel.showSnackBarInt.getOrAwaitValue(),
             `is`(R.string.err_select_location)
         )
+
+        // Testing snackbar
         onView(
             allOf(
                 withId(R.id.snackbar_text), withText(
