@@ -7,7 +7,6 @@ import android.annotation.TargetApi
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.LocationServices
@@ -21,6 +20,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
+import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import org.koin.android.ext.android.inject
@@ -52,14 +52,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         val mapFragment = childFragmentManager.findFragmentById(R.id.maps) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        Toast.makeText(requireContext(), R.string.select_location, Toast.LENGTH_LONG).show()
-
         binding.saveButton.setOnClickListener {
             if (marker != null) {
                 onLocationSelected()
             } else {
-                Toast.makeText(requireContext(), R.string.select_location, Toast.LENGTH_SHORT)
-                    .show()
+                _viewModel.showToast.value = getString(R.string.select_location)
             }
         }
 
@@ -100,9 +97,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     @TargetApi(29)
     private fun enableMyLocation() {
         if (isPermissionGranted()) {
+            _viewModel.showToast.value = getString(R.string.select_location)
+
             map.isMyLocationEnabled = true
             setLocationListener()
-            setPoiClick()
         } else {
             requestPermissions(
                 arrayOf(
@@ -128,6 +126,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
+            } else {
+                _viewModel.showErrorDialog.value = getString(R.string.permission_denied_explanation)
+                _viewModel.navigationCommand.value = NavigationCommand.Back
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -136,6 +137,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onMapReady(googleMaps: GoogleMap) {
         map = googleMaps
         enableMyLocation()
+        setPoiClick()
 
         map.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
@@ -155,6 +157,20 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 MarkerOptions()
                     .position(poi.latLng)
                     .title(poi.name)
+            )
+            marker?.showInfoWindow()
+        }
+
+        map.setOnMapClickListener { latLng ->
+            if (marker != null) {
+                marker?.remove()
+            }
+
+            val title = getString(R.string.lat_long_snippet, latLng.latitude, latLng.longitude)
+            marker = map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title(title)
             )
             marker?.showInfoWindow()
         }

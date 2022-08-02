@@ -1,10 +1,13 @@
 package com.udacity.project4.base
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.udacity.project4.R
 
 /**
  * Base Fragment to observe on the common LiveData objects
@@ -40,5 +43,20 @@ abstract class BaseFragment : Fragment() {
                 )
             }
         })
+        _viewModel.showErrorDialog.observe(this, Observer {
+            createDialog(it).show()
+        })
+    }
+
+    fun createDialog(message: String): Dialog {
+        return activity.let {
+            AlertDialog.Builder(it)
+                .setTitle(R.string.error_happened)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create()
+        }
     }
 }
