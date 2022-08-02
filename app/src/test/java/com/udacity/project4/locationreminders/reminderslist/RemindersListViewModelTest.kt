@@ -40,6 +40,7 @@ class RemindersListViewModelTest {
     fun getErrorResultFromLoadReminders() = runBlockingTest {
         // GIVEN
         fakeDataSource.deleteAllReminders()
+        fakeDataSource.setReturnError(true)
 
         // WHEN
         remindersListViewModel.loadReminders()
@@ -47,7 +48,7 @@ class RemindersListViewModelTest {
         // THEN
         assertThat(
             remindersListViewModel.showSnackBar.getOrAwaitValue(),
-            `is`("error")
+            `is`("Test exception")
         )
 
         assertThat(
@@ -59,6 +60,7 @@ class RemindersListViewModelTest {
     @Test
     fun getSuccessResultFromLoadReminders() = runBlockingTest {
         // GIVEN
+        fakeDataSource.setReturnError(false)
         val title = "title"
         val description = "description"
         val location = "location"
@@ -100,6 +102,7 @@ class RemindersListViewModelTest {
     @Test
     fun loadingTest() {
         // GIVEN
+        fakeDataSource.setReturnError(false)
         mainCoroutineRule.pauseDispatcher()
 
         // WHEN
