@@ -7,7 +7,6 @@ import android.annotation.TargetApi
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,6 +22,8 @@ import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.utils.isLocationEnabled
+import com.udacity.project4.utils.isPermissionGranted
 import org.koin.android.ext.android.inject
 
 @SuppressLint("MissingPermission")
@@ -96,7 +97,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     @TargetApi(29)
     private fun enableMyLocation() {
-        if (isPermissionGranted()) {
+        if (!isLocationEnabled(requireContext())) {
+            _viewModel.showErrorDialog.value = getString(R.string.location_required_error)
+            _viewModel.navigationCommand.value = NavigationCommand.Back
+            return
+        }
+
+        if (isPermissionGranted(requireContext())) {
             _viewModel.showToast.value = getString(R.string.select_location)
 
             map.isMyLocationEnabled = true
@@ -109,13 +116,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 REQUEST_LOCATION_PERMISSION
             )
         }
-    }
-
-    private fun isPermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onRequestPermissionsResult(

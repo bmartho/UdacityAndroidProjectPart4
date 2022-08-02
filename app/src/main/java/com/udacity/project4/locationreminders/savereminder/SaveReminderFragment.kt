@@ -1,8 +1,10 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +22,8 @@ import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.geofence.GeofenceTransitionsJobIntentService.Companion.ACTION_GEOFENCE_EVENT
 import com.udacity.project4.locationreminders.geofence.GeofenceTransitionsJobIntentService.Companion.RADIUS_IN_METRES
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.utils.isLocationEnabled
+import com.udacity.project4.utils.isPermissionGranted
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 
@@ -29,13 +33,14 @@ class SaveReminderFragment : BaseFragment() {
     private lateinit var binding: FragmentSaveReminderBinding
 
     companion object {
-        private val TAG = "SaveReminderFragment"
+        private const val TAG = "SaveReminderFragment"
+        private const val REQUEST_LOCATION_PERMISSION = 321
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container, false)
 
@@ -56,18 +61,34 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         binding.saveReminder.setOnClickListener {
-            val reminderData = ReminderDataItem(
-                title = _viewModel.reminderTitle.value,
-                description = _viewModel.reminderDescription.value,
-                location = _viewModel.reminderSelectedLocationStr.value,
-                latitude = _viewModel.latitude.value,
-                longitude = _viewModel.longitude.value
-            )
-            if (_viewModel.validateAndSaveReminder(reminderData)) {
-                createGeofence(reminderData)
-            } else {
-                _viewModel.showToast.value = getString(R.string.error_on_saving)
+            if (!isLocationEnabled(requireContext())) {
+                _viewModel.showErrorDialog.value = getString(R.string.location_required_error)
+                return@setOnClickListener
             }
+
+            if (isPermissionGranted(requireContext())) {
+                saveReminder()
+            } else {
+                requestPermissions(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ),
+                    REQUEST_LOCATION_PERMISSION
+                )
+            }
+        }
+    }
+
+    private fun saveReminder() {
+        val reminderData = ReminderDataItem(
+            title = _viewModel.reminderTitle.value,
+            description = _viewModel.reminderDescription.value,
+            location = _viewModel.reminderSelectedLocationStr.value,
+            latitude = _viewModel.latitude.value,
+            longitude = _viewModel.longitude.value
+        )
+        if (_viewModel.validateAndSaveReminder(reminderData)) {
+            createGeofence(reminderData)
         }
     }
 
@@ -108,6 +129,21 @@ class SaveReminderFragment : BaseFragment() {
                 Log.e(TAG, "Geofence add fail, please check your location")
             }
         }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                saveReminder()
+            } else {
+                _viewModel.showErrorDialog.value = getString(R.string.permission_denied_explanation)
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onDestroy() {
