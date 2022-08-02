@@ -61,13 +61,6 @@ class SaveReminderFragmentTest : BaseTest() {
             saveReminderViewModel.showSnackBarInt.getOrAwaitValue(),
             `is`(R.string.err_enter_title)
         )
-        assertThat(
-            saveReminderViewModel.showToast.getOrAwaitValue(),
-            `is`(
-                ApplicationProvider.getApplicationContext<Context>()
-                    .getString(R.string.error_on_saving)
-            )
-        )
     }
 
     @Test
@@ -85,13 +78,6 @@ class SaveReminderFragmentTest : BaseTest() {
         assertThat(
             saveReminderViewModel.showSnackBarInt.getOrAwaitValue(),
             `is`(R.string.err_select_location)
-        )
-        assertThat(
-            saveReminderViewModel.showToast.getOrAwaitValue(),
-            `is`(
-                ApplicationProvider.getApplicationContext<Context>()
-                    .getString(R.string.error_on_saving)
-            )
         )
     }
 

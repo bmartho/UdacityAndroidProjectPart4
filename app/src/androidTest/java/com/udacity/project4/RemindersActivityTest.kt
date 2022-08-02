@@ -52,12 +52,14 @@ class RemindersActivityTest : BaseTest() {
         }
 
         // WHEN
-        ActivityScenario.launch(RemindersActivity::class.java)
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
 
         // THEN
         onView(withText(reminderDTO.title)).check(matches(isDisplayed()))
         onView(withText(reminderDTO.description)).check(matches(isDisplayed()))
         onView(withText(reminderDTO.location)).check(matches(isDisplayed()))
+
+        activityScenario.close()
     }
 
     @Test
@@ -85,7 +87,7 @@ class RemindersActivityTest : BaseTest() {
         }
 
         // WHEN
-        ActivityScenario.launch(RemindersActivity::class.java)
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
 
         // THEN
         onView(withText(reminderDTO.title)).check(matches(isDisplayed()))
@@ -95,6 +97,8 @@ class RemindersActivityTest : BaseTest() {
         onView(withText(reminderDTO2.title)).check(matches(isDisplayed()))
         onView(withText(reminderDTO2.description)).check(matches(isDisplayed()))
         onView(withText(reminderDTO2.location)).check(matches(isDisplayed()))
+
+        activityScenario.close()
     }
 
     @Test
@@ -109,7 +113,8 @@ class RemindersActivityTest : BaseTest() {
         saveReminderViewModel.longitude.value = 1.0
 
         // WHEN
-        ActivityScenario.launch(RemindersActivity::class.java)
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+
         onView(withId(R.id.addReminderFAB))
             .perform(click())
         onView(withId(R.id.reminderTitle)).perform(typeText(title))
@@ -134,5 +139,7 @@ class RemindersActivityTest : BaseTest() {
             saveReminderViewModel.navigationCommand.getOrAwaitValue(),
             Matchers.instanceOf(NavigationCommand.Back.javaClass)
         )
+
+        activityScenario.close()
     }
 }
