@@ -24,7 +24,7 @@ import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.isLocationEnabled
 import com.udacity.project4.utils.isPermissionGranted
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 @SuppressLint("MissingPermission")
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
@@ -32,7 +32,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     //Use Koin to get the view model of the SaveReminder
     private lateinit var map: GoogleMap
     private var marker: Marker? = null
-    override val _viewModel: SaveReminderViewModel by inject()
+    override val _viewModel: SaveReminderViewModel by sharedViewModel()
     private lateinit var binding: FragmentSelectLocationBinding
 
     companion object {
