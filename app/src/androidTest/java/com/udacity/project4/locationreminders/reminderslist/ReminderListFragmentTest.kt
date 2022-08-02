@@ -1,20 +1,16 @@
 package com.udacity.project4.locationreminders.reminderslist
 
-import android.content.Context
 import android.os.Bundle
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.util.BaseTest
@@ -53,32 +49,6 @@ class ReminderListFragmentTest : BaseTest() {
         verify(navController).navigate(
             ReminderListFragmentDirections.toSaveReminder()
         )
-    }
-
-    @Test
-    fun navigateToLogout() {
-        // GIVEN
-        launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-
-        // WHEN
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
-        onView(
-            withText(
-                getApplicationContext<Context>().getString(
-                    R.string.logout
-                )
-            )
-        ).perform(click())
-
-        // THEN
-        onView(withId(R.id.loginButton)).check(matches(isDisplayed()))
-        onView(
-            withText(
-                getApplicationContext<Context>().getString(
-                    R.string.welcome_to_the_location_reminder_app
-                )
-            )
-        ).check(matches(isDisplayed()))
     }
 
     @Test

@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
@@ -106,7 +105,7 @@ class SaveReminderFragment : BaseFragment() {
                 Log.d(TAG, "Geofence added")
             }
             addOnFailureListener {
-                _viewModel.showErrorMessage.postValue(getString(R.string.error_adding_geofence))
+                Log.e(TAG, "Geofence add fail, please check your location")
             }
         }
     }
