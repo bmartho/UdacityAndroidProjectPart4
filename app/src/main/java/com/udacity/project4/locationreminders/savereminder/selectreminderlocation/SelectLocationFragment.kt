@@ -21,7 +21,7 @@ import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
-import com.udacity.project4.utils.isPermissionGranted
+import com.udacity.project4.utils.isLocationPermissionGranted
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 @SuppressLint("MissingPermission")
@@ -95,7 +95,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     @TargetApi(29)
     private fun enableMyLocation() {
-        if (isPermissionGranted(requireContext())) {
+        if (isLocationPermissionGranted(requireContext())) {
             _viewModel.showToast.value = getString(R.string.select_location)
 
             map.isMyLocationEnabled = true
