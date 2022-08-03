@@ -11,9 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofencingRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -22,7 +21,6 @@ import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.geofence.GeofenceTransitionsJobIntentService.Companion.ACTION_GEOFENCE_EVENT
 import com.udacity.project4.locationreminders.geofence.GeofenceTransitionsJobIntentService.Companion.RADIUS_IN_METRES
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
-import com.udacity.project4.utils.isLocationEnabled
 import com.udacity.project4.utils.isPermissionGranted
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -35,6 +33,7 @@ class SaveReminderFragment : BaseFragment() {
     companion object {
         private const val TAG = "SaveReminderFragment"
         private const val REQUEST_LOCATION_PERMISSION = 321
+        private const val REQUEST_LOCATION_SERVICE = 12345
     }
 
     override fun onCreateView(
@@ -61,13 +60,8 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         binding.saveReminder.setOnClickListener {
-            if (!isLocationEnabled(requireContext())) {
-                _viewModel.showErrorDialog.value = getString(R.string.location_required_error)
-                return@setOnClickListener
-            }
-
             if (isPermissionGranted(requireContext())) {
-                saveReminder()
+                checkLocationAndSaveReminder()
             } else {
                 requestPermissions(
                     arrayOf(
@@ -75,6 +69,34 @@ class SaveReminderFragment : BaseFragment() {
                     ),
                     REQUEST_LOCATION_PERMISSION
                 )
+            }
+        }
+    }
+
+    private fun checkLocationAndSaveReminder() {
+        val request = LocationRequest.create()
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(request)
+        val client = LocationServices.getSettingsClient(requireActivity())
+        val locationSettingsResponseTask = client.checkLocationSettings(builder.build())
+        locationSettingsResponseTask.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                startIntentSenderForResult(
+                    exception.resolution.intentSender,
+                    REQUEST_LOCATION_SERVICE,
+                    null,
+                    0,
+                    0,
+                    0,
+                    null
+                )
+            }
+        }
+
+        locationSettingsResponseTask.addOnCompleteListener {
+            if (it.isSuccessful) {
+                saveReminder()
+            } else {
+                _viewModel.showSnackBarInt.value = R.string.location_required_error
             }
         }
     }
@@ -138,9 +160,10 @@ class SaveReminderFragment : BaseFragment() {
     ) {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                saveReminder()
+                checkLocationAndSaveReminder()
             } else {
-                _viewModel.showErrorDialog.value = getString(R.string.permission_denied_explanation)
+                _viewModel.showErrorDialog.value =
+                    getString(R.string.permission_denied_explanation)
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

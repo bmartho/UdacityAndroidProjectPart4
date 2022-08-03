@@ -19,10 +19,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
-import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
-import com.udacity.project4.utils.isLocationEnabled
 import com.udacity.project4.utils.isPermissionGranted
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -97,12 +95,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     @TargetApi(29)
     private fun enableMyLocation() {
-        if (!isLocationEnabled(requireContext())) {
-            _viewModel.showErrorDialog.value = getString(R.string.location_required_error)
-            _viewModel.navigationCommand.value = NavigationCommand.Back
-            return
-        }
-
         if (isPermissionGranted(requireContext())) {
             _viewModel.showToast.value = getString(R.string.select_location)
 
@@ -127,8 +119,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
             } else {
-                _viewModel.showErrorDialog.value = getString(R.string.permission_denied_explanation)
-                _viewModel.navigationCommand.value = NavigationCommand.Back
+                _viewModel.showErrorDialog.value =
+                    getString(R.string.permission_denied_explanation_on_select_location)
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
